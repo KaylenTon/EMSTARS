@@ -20,7 +20,6 @@ system.time(
 
 names(data) <- file_path_sans_ext(basename(files))
 
-
 # DuckDB attempt ----------------------------------------------------------
 
 con <- dbConnect(duckdb(), dbdir = "research_db.duckdb", read_only = FALSE)
@@ -39,3 +38,8 @@ FROM read_csv_auto(
 ")
 
 test <- dbGetQuery(con, "SELECT * FROM patient1 LIMIT 5;")
+
+
+# Disconnect --------------------------------------------------------------
+
+dbDisconnect(con, shutdown = TRUE)
