@@ -26,7 +26,7 @@ names(data) <- file_path_sans_ext(basename(files))
 
 
 # Start Connection
-con <- dbConnect(duckdb(), dbdir = "research_db.duckdb", read_only = FALSE)
+con <- dbConnect(duckdb(), dbdir = "~/R PRACTICE/research_db.duckdb", read_only = FALSE)
 
 # View Tables
 dbListTables(con)
