@@ -22,7 +22,8 @@ system.time(
 names(data) <- file_path_sans_ext(basename(files))
 
 
-# DuckDB attempt ----------------------------------------------------------
+
+# DuckDB ------------------------------------------------------------------
 
 
 # Start Connection
