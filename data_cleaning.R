@@ -4,28 +4,44 @@ library(duckdb)
 library(duckplyr)
 library(lubridate)
 
-# Exploring 20 sample -----------------------------------------------------
+# Inspecting small sample -------------------------------------------------
+
 
 path <- "~/R PRACTICE/FL_EMSTARS_csv"
 
 files <- list.files(
   path,
-  pattern = "//.csv$",
+  pattern = "\\.csv$",
   full.names = T
 )
 
 system.time(
-  data <- lapply(files, read_csv, n_max = 20)
+  data <- lapply(files, read_csv, n_max = 1000)
 )
 
 names(data) <- file_path_sans_ext(basename(files))
 
+
 # DuckDB attempt ----------------------------------------------------------
 
+
+# Start Connection
 con <- dbConnect(duckdb(), dbdir = "research_db.duckdb", read_only = FALSE)
 
+# View Tables
+dbListTables(con)
+  # Drop Table
+  # dbExecute(con, "DROP TABLE [REPLACE];")
+
+# Disconnect
+dbDisconnect(con, shutdown = TRUE)
+
+
+# Retrieving Data ---------------------------------------------------------
+
+
 dbExecute(con, "
-CREATE TABLE patient1 AS
+CREATE TABLE testing AS
 SELECT 
   PatientId::VARCHAR AS PatientId,
   ReportsID::VARCHAR AS ReportsID,
@@ -37,9 +53,15 @@ FROM read_csv_auto(
 )
 ")
 
-test <- dbGetQuery(con, "SELECT * FROM patient1 LIMIT 5;")
+test <- dbGetQuery(con, 
+                   "SELECT * 
+                   FROM patient1 
+                   LIMIT 5;")
 
 
 # Disconnect --------------------------------------------------------------
 
 dbDisconnect(con, shutdown = TRUE)
+
+# test --------------------------------------------------------------------
+
