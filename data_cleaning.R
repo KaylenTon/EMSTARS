@@ -23,7 +23,6 @@ system.time(
 names(data) <- file_path_sans_ext(basename(files))
 
 
-
 # DuckDB ------------------------------------------------------------------
 
 
@@ -49,31 +48,6 @@ dbDisconnect(con, shutdown = TRUE)
 # Retrieving Data ---------------------------------------------------------
 
 
-dbExecute(con, "
-CREATE TABLE testing AS
-SELECT 
-  PatientId::VARCHAR AS PatientId,
-  ReportsID::VARCHAR AS ReportsID,
-  Gender::DOUBLE AS Gender,
-  Age::DOUBLE AS Age
-FROM read_csv_auto(
-  'C:/Users/Kaylen/OneDrive - University of South Florida/Documents/R PRACTICE/FL_EMSTARS_csv/patient.csv',
-  nullstr='.'
-)
-")
-
-test <- dbGetQuery(con, 
-                   "SELECT * 
-                   FROM crew 
-                   LIMIT 5;")
-
-
-# Disconnect --------------------------------------------------------------
-
-dbDisconnect(con, shutdown = TRUE)
-
-# test --------------------------------------------------------------------
-
 for (i in seq_along(files)) {
   
   table_name <- file_path_sans_ext(basename(files[i]))
@@ -91,3 +65,11 @@ for (i in seq_along(files)) {
   print(paste("Iteration", i, table_name, "complete"))
   print(iteration_time)
 }
+
+
+# Cleaning Data -----------------------------------------------------------
+
+
+event_sample_view <- dbGetQuery(con, 
+                                "SELECT COUNT(DISTINCT (ReportsID, EmsAgencyNumber))
+                                FROM event")
