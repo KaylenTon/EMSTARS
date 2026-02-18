@@ -31,8 +31,8 @@ con <- dbConnect(duckdb(), dbdir = "~/R PRACTICE/research_db.duckdb", read_only 
 
 # View Tables
 dbListTables(con)
-  # Drop Table
-  # dbExecute(con, "DROP TABLE *;")
+  # Drop [SPECIFIC] Table
+  # dbExecute(con, "DROP TABLE [TABLE NAME];")
 
 # Drop ALL tables
 tables <- dbListTables(con)
