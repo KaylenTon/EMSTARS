@@ -74,20 +74,21 @@ to_NA <- c("7701003", "7701001", "7701005", "Not Recorded", "Not Applicable", ""
 
 
 tbl(con, "event") %>% 
+  glimpse() %>% 
+  count()
+
+tbl(con, "event") %>% 
+  select() %>% # SELECT VARIABLES OF INTEREST
+  mutate(across(everything(), ~ if_else(.x %in% !!to_NA, NA, .x))) %>%  # VERIFY WHAT IS ACTUALLY NA
+  mutate(across(contains("DateTime"), ~ strptime(.x, '%d%b%Y:%H:%M:%S.%f'))) %>% # REMOVE MILLISECONDS, PASTE ON TZs, PARSE, THEN STANDARDIZE
+  mutate() # I need to change data types where needed and also re-code elements for variables
+
+tbl(con, "personnel") %>% 
   glimpse()
 
 tbl(con, "patient") %>% 
   glimpse()
 
 tbl(con, "agency") %>% 
-  glimpse()
-
-tbl(con, "event") %>% 
-  select() %>% # SELECT VARIABLES OF INTEREST
-  mutate(across(everything(), ~ if_else(.x %in% !!to_NA, NA, .x))) %>%  # VERIFY WHAT IS ACTUALLY NA
-  mutate(across(contains("DateTime"), ~ strptime(.x, '%d%b%Y:%H:%M:%S.%f'))) %>% # REMOVE MILLISECONDS, PASTE ON TZs, PARSE, THEN STANDARDIZE
-  mutate() #
-
-tbl(con, "personnel") %>% 
   glimpse()
 
