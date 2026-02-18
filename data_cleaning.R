@@ -1,3 +1,4 @@
+library(glue)
 library(readr)
 library(tools)
 library(duckdb)
@@ -32,7 +33,14 @@ con <- dbConnect(duckdb(), dbdir = "~/R PRACTICE/research_db.duckdb", read_only 
 # View Tables
 dbListTables(con)
   # Drop Table
-  # dbExecute(con, "DROP TABLE [REPLACE];")
+  # dbExecute(con, "DROP TABLE *;")
+
+# Drop ALL tables
+tables <- dbListTables(con)
+for (table in tables) {
+  dbExecute(con, paste0("DROP TABLE ", table, ";"))
+}
+
 
 # Disconnect
 dbDisconnect(con, shutdown = TRUE)
@@ -56,7 +64,7 @@ FROM read_csv_auto(
 
 test <- dbGetQuery(con, 
                    "SELECT * 
-                   FROM patient1 
+                   FROM crew 
                    LIMIT 5;")
 
 
@@ -66,3 +74,20 @@ dbDisconnect(con, shutdown = TRUE)
 
 # test --------------------------------------------------------------------
 
+for (i in seq_along(files)) {
+  
+  table_name <- file_path_sans_ext(basename(files[i]))
+  
+  query <- glue("
+    CREATE TABLE {table_name} AS
+    SELECT *
+    FROM read_csv_auto('{files[i]}', nullstr = '.', all_varchar=true, ignore_errors = TRUE)
+  ")
+  
+  iteration_time <- system.time({
+    dbExecute(con, query)
+  })
+  
+  print(paste("Iteration", i, table_name, "complete"))
+  print(iteration_time)
+}
