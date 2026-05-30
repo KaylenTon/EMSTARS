@@ -4,6 +4,7 @@ library(tools)
 library(duckdb)
 library(duckplyr)
 library(lubridate)
+library(tidyverse)
 
 # Inspecting small sample -------------------------------------------------
 
@@ -92,3 +93,21 @@ tbl(con, "patient") %>%
 tbl(con, "agency") %>% 
   glimpse()
 
+
+
+library(dplyr)
+library(dbplyr)
+library(purrr)
+
+dbListTables(con) %>%
+  set_names() %>%
+  map(~ tbl(con, .x) %>% colnames())
+
+
+table_samples <- dbListTables(con) %>%
+  set_names() %>%
+  map(~ tbl(con, .x) %>%
+        head(5) %>%
+        collect())
+
+View(table_samples)
